@@ -21,6 +21,8 @@ data_dir = sys.argv[1]
 output_dir = sys.argv[2]
 window_size = 8
 embedding_size = 100
+# batch_size
+batch_size = 250
 
 if torch.cuda.is_available():
     print('using gpu')
@@ -31,13 +33,15 @@ else:
 
 # get dataset
 # data_set, vocabs, w2i, i2w = get_dataset(data_dir, min_frequency=8, threshhold=5000)
-print("loading dataset")
+print("Loading dataset")
 data_set, vocabs, w2i, i2w = utils.get_dataset(data_dir)
+print("Loading successfully")
+
+print("Preparing data for training")
 training_data = utils.get_training_data(data_set, vocabs, w2i, i2w, window_size)
+print("Prepare sucessfully")
 
-# batch_size
-batch_size = 250
-
+print("Initialize model")
 # training
 losses = []
 loss_function = nn.NLLLoss()
@@ -45,6 +49,7 @@ model = Skipgram.Model(len(vocabs), embedding_size).to(device)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 epoch = 20
 
+print("Start training")
 for e in range(epoch):
     total_loss = 0
     for center, context in utils.get_batch(training_data, batch_size):
@@ -71,5 +76,8 @@ print(model.get_embedding(test_word))
 with open('vocabs.json', 'w') as f:
     json.dump(vocabs, f)
 # save models
+
+print("saving trained model")
 torch.save(model.state_dict(), output_dir)
+print("save successfully at {}".format(output_dir))
 #torch.save(model, model_dir)
