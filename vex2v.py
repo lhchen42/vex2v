@@ -15,9 +15,10 @@ import sys
 
 import json
 
+os.environ["CUDA_VISIBLE_DEVICES"]="3"
 # constants
 data_dir = sys.argv[1]
-model_dir
+output_dir = sys.argv[2]
 window_size = 8
 embedding_size = 100
 
@@ -30,8 +31,8 @@ else:
 
 # get dataset
 # data_set, vocabs, w2i, i2w = get_dataset(data_dir, min_frequency=8, threshhold=5000)
-data_set, vocabs, w2i, i2w = get_dataset(data_dir)
-window_size = 8
+print("loading dataset")
+data_set, vocabs, w2i, i2w = utils.get_dataset(data_dir)
 training_data = utils.get_training_data(data_set, vocabs, w2i, i2w, window_size)
 
 # batch_size
